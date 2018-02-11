@@ -24,7 +24,7 @@
   <meta name="description" content="xgfe's blog. 鲜果前端的技术博客，鲜果前端研发部官方博客。前端基础技术研究：html, html5, javascript, css, css3；前端框架研究：angularJs, react, react native." />
 
 
-  <meta name="keywords" content="CSS,Less,Sass," />
+  <meta name="keywords" content="android,源码,listview," />
 
 
   <link rel="alternate" target="_blank" href="/atom.xml" title="xgfe" type="application/atom+xml" />
@@ -32,32 +32,18 @@
 
   <link rel="shorticon icon" type="image/x-icon" href="http://p0.meituan.net/xgfe/2db359f56ce13be30dedef160e0e57ce16958.ico?v=0.4.5.1" />
 
-<meta name="description" content="通过一些对Less 和 Sass 的研究和学习,逐渐发现了它们一些共同特征（混入、参数混入、嵌套规则、运算、颜色功能、名字空间、作用域、JavaScript 赋值）和 不同之处，这里主要总结一些 Less 和 Sass 用法不同之处。">
-<meta name="keywords" content="CSS,Less,Sass">
+<meta name="description" content="本文主要是分析ListView源码，重点关注复用机制。">
+<meta name="keywords" content="android,源码,listview">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Less Vs Sass">
-<meta property="og:url" content="http://xgfe.github.io/2018/01/26/zhoushiqi/Less-VS-Sass/index.html">
+<meta property="og:title" content="ListView源码分析">
+<meta property="og:url" content="http://xgfe.github.io/2018/02/09/caominkang/ListView源码分析/index.html">
 <meta property="og:site_name" content="xgfe">
-<meta property="og:description" content="通过一些对Less 和 Sass 的研究和学习,逐渐发现了它们一些共同特征（混入、参数混入、嵌套规则、运算、颜色功能、名字空间、作用域、JavaScript 赋值）和 不同之处，这里主要总结一些 Less 和 Sass 用法不同之处。">
+<meta property="og:description" content="本文主要是分析ListView源码，重点关注复用机制。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwpg061yj30nw0cwq62.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwo1ksgcj30p80cugo9.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwzi2wicj30pm0f4whn.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwzh8h1zj30ps0fgq67.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fnty9d44q4j30pi0bcacy.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fnty9br31dj30p40iqdjj.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwsyxnt0j30fi0qqacf.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwsw1rouj30fg0qodi7.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxaheqwoj30n00kin0g.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxak5ku1j30my0ketcd.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxcz0u3aj30ng0dwq55.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxcz7mboj30nm0e0wgz.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxsqoiopj30p60kmn0e.jpg">
-<meta property="og:updated_time" content="2018-02-06T08:52:36.000Z">
+<meta property="og:updated_time" content="2018-02-09T08:49:21.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Less Vs Sass">
-<meta name="twitter:description" content="通过一些对Less 和 Sass 的研究和学习,逐渐发现了它们一些共同特征（混入、参数混入、嵌套规则、运算、颜色功能、名字空间、作用域、JavaScript 赋值）和 不同之处，这里主要总结一些 Less 和 Sass 用法不同之处。">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwpg061yj30nw0cwq62.jpg">
+<meta name="twitter:title" content="ListView源码分析">
+<meta name="twitter:description" content="本文主要是分析ListView源码，重点关注复用机制。">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -67,7 +53,7 @@
   };
 </script>
 
-  <title> Less Vs Sass | xgfe </title>
+  <title> ListView源码分析 | xgfe </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -210,7 +196,7 @@
           
           
             
-              Less Vs Sass
+              ListView源码分析
             
           
         </h1>
@@ -219,8 +205,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2018-01-26T00:00:00+08:00" content="2018-01-26">
-            2018-01-26
+          <time itemprop="dateCreated" datetime="2018-02-09T13:12:00+08:00" content="2018-02-09">
+            2018-02-09
           </time>
         </span>
 
@@ -229,8 +215,8 @@
             &nbsp; | &nbsp; 作者
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/zhoushiqi/" itemprop="url" rel="index">
-                  <span itemprop="name">zhoushiqi</span>
+                <a href="/categories/caominkang/" itemprop="url" rel="index">
+                  <span itemprop="name">caominkang</span>
                 </a>
               </span>
 
@@ -250,11 +236,11 @@
           <span class="post-tags">
             &nbsp; | &nbsp;
             
-              <a href="/tags/CSS/" rel="tag"><i class="icon-next-tags"></i>CSS</a>
+              <a href="/tags/android/" rel="tag"><i class="icon-next-tags"></i>android</a>
             
-              <a href="/tags/Less/" rel="tag"><i class="icon-next-tags"></i>Less</a>
+              <a href="/tags/源码/" rel="tag"><i class="icon-next-tags"></i>源码</a>
             
-              <a href="/tags/Sass/" rel="tag"><i class="icon-next-tags"></i>Sass</a>
+              <a href="/tags/listview/" rel="tag"><i class="icon-next-tags"></i>listview</a>
             
           </span>
         
@@ -267,107 +253,279 @@
       
 
       
-        <span itemprop="articleBody"><p>通过一些对Less 和 Sass 的研究和学习,逐渐发现了它们一些共同特征（混入、参数混入、嵌套规则、运算、颜色功能、名字空间、作用域、JavaScript 赋值）和 不同之处，这里主要总结一些 Less 和 Sass <strong>用法不同之处</strong>。</p>
+        <span itemprop="articleBody"><p>本文主要是分析ListView源码，重点关注复用机制。</p>
 <a id="more"></a>
-<h2 id="CSS-预处理器"><a href="#CSS-预处理器" class="headerlink" title="CSS 预处理器"></a>CSS 预处理器</h2><p>CSS 预处理器：用一种专门的编程语言，为 CSS 增加了一些编程的特性，将 CSS作为目标生成文件，开发者只需使用这种语言就可进行编码工作。</p>
-<h2 id="简述-Less-amp-Sass"><a href="#简述-Less-amp-Sass" class="headerlink" title="简述 Less &amp; Sass"></a>简述 Less &amp; Sass</h2><table><tr><td>Less</td><td>Sass</td></tr><tr><td>Less 是一门 CSS 预处理语言，它扩充了 CSS 语言，增加了诸如变量、混合（mixin）、函数等功能，让 CSS 更易维护、方便制作主题、扩充。</td><td> Sass 是一门高于 CSS 的元语言，也是一门CSS预处理语言，它能用来清晰地、结构化地描述文件样式，有着比普通 CSS 更加强大的功能。Sass 能够提供更简洁、更优雅的语法，同时提供多种功能来创建可维护和管理的样式表。 </td></tr></table>
-
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><blockquote>
-<ul>
-<li>Less : npm install -g less</li>
-<li>Sass : gem install sass</li>
-</ul>
-</blockquote>
-<h2 id="Sass-amp-Less-对比"><a href="#Sass-amp-Less-对比" class="headerlink" title="Sass &amp; Less 对比"></a>Sass &amp; Less 对比</h2><h3 id="编译环境"><a href="#编译环境" class="headerlink" title="编译环境"></a>编译环境</h3><ul>
-<li>Sass的安装需要Ruby环境,是在服务端处理的</li>
-<li>Less是需要引入less.js来处理Less代码输出css到浏览器，也可以在开发环节使用Less，然后编译乘css文件，直接放到项目中,也有Less.app、SimpleLess、CodeKit.app这样的工具，也有在线编译的。</li>
-</ul>
-<h3 id="引用-import"><a href="#引用-import" class="headerlink" title="引用 @import"></a>引用 @import</h3><ul>
-<li>Less引用外部文件和css中的@import没什么差异。</li>
-<li>scss引用的外部文件命名必须以<em> 开头,文件名如果以下划线</em> 开头的话,Sass会认为该文件是一个引用文件,不会将其编译为css文件。</li>
-</ul>
-<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><ul>
-<li>Less的变量声明和调用 : 用@ </li>
-<li>Sass的变量声明和调用 : 用$</li>
-</ul>
-<table><tr><td>Less</td><td>Sass</td></tr><tr><td><img width="300px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwpg061yj30nw0cwq62.jpg"></td><td><img width="300px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwo1ksgcj30p80cugo9.jpg"></td></tr></table>
-
-<h3 id="局部变量和全局变量"><a href="#局部变量和全局变量" class="headerlink" title="局部变量和全局变量"></a>局部变量和全局变量</h3><p>Both : 定义全局变量（在选择器、函数、选择宏…的外面定义的变量为全局变量）</p>
-<table><tr><td>Less</td><td>Sass</td></tr><tr><td><img width="300px" height="150px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwzi2wicj30pm0f4whn.jpg"></td><td><img width="300px" height="150px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwzh8h1zj30ps0fgq67.jpg"></td></tr></table>
-
-<h3 id="工具库"><a href="#工具库" class="headerlink" title="工具库"></a>工具库</h3><ul>
-<li>Sass有工具库Compass,简单说,Sass和Compass的关系有点像Javascript和jQuery的关系,Compass是Sass的工具库。在它的基础上,封装了一系列有用的模块和模板,补充强化了Sass的功能。</li>
-<li>Less有UI组件库Bootstrap,Bootstrap是web前端开发中一个比较有名的前端UI组件库，Bootstrap的样式文件部分源码就是采用Less语法编写。</li>
-</ul>
-<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><p>1.在Less里你可以用递归函数通过数值来循环:</p>
-<pre><code>.looper (@i) when (@i &gt; 0) {
-  .image-class-@{i} {
-    background: url(“../img/@{i}.png”) no-repeat;
-  }
-  .looper(@i – 1);
+<h1 id="ListView源码解析"><a href="#ListView源码解析" class="headerlink" title="ListView源码解析"></a>ListView源码解析</h1><p>&nbsp;&nbsp;本文分为三个部分，第一个部分提取出RecycleBin的相关代码，对RecyleBin做基本讲解；第二部分讲解ListView初始化时onLayout过程；第三部分讲解ListView如何在屏幕滑动中实现复用。</p>
+<h2 id="一、RecycleBin"><a href="#一、RecycleBin" class="headerlink" title="一、RecycleBin"></a>一、RecycleBin</h2><p>&nbsp;&nbsp;RecycleBin是AbsListView的子类，也就是说只要是继承自AbsListView的，都可以使用这个机制，代码结构大概如下：</p>
+<pre><code>class RecycleBin{
+    private int mFirstPosition;
+    private View[] mActiveViews = new View[0];
+    private int mViewTypeCount;
+    private ArrayList&lt;View&gt;[] mScrapViews;
+    private ArrayList&lt;View&gt; mCurrentScrap;
+    void fillActiveViews(int childCount,int firstActivePostion)
+    void getActiveView(int position);
+    void addScrapView(View scrap);
+    View getSrapView(int position);
+    public void setViewTypeCount(int viewTypeCount);
 }
-.looper(0);
-.looper(3);
-</code></pre><p>2.在Sass里你可以通过任何数据来迭代:</p>
-<pre><code>@each $beer in stout, pilsner, lager {
-  .#{$beer}-background {
-    background: url(“../img/beers/#{$beer}.png”) no-repeat;
-  }
+</code></pre><p>下面介绍字段和api：</p>
+<ul>
+<li>mFirstPosition指的是mActiveView[0]中存储的View在数据中的position。</li>
+<li>mActiveViews缓存的是第一屏的数据，后面的讲解中会说明，主要是在ListView初始化中起作用</li>
+<li>mViewTypeCount代表数据种类，值由setViewTypeCount方法设置。ListView可以处理不同种类的数据</li>
+<li>mScrapViews用来缓存移出到屏幕外的view，因为ListView支持不同种类数据，所以mScrapViews是一个二维数组，对应不同种类数据，使用不同的ArrayList去缓存。</li>
+<li>fillActiveViews是将屏幕上可以看到的view缓存到mActiveViews中</li>
+<li>getActiveViews将指定的位置的view从mActiveViews中取出来，需要注意的是，取出后再次获取该位置view会返回空。</li>
+<li>getScrapView用于从mScrapView中取出view，由于同种数据类型的view都是相同的，所以该方法只是返回该类型最后一个位置的view。</li>
+</ul>
+<p>也就是说RecycleBin有两种缓存view的模式：ActiveView和ScrapView.ListView在初始化过程中使用mActiveViews来缓存显示在屏幕中的view，在滚动过程中使用mScrapView缓存移除到屏幕外的数据，实现复用。下面我来具体看ListView是如何通过调用RecycleBin的方法来管理view的复用。</p>
+<h2 id="二、ListView初始化过程"><a href="#二、ListView初始化过程" class="headerlink" title="二、ListView初始化过程"></a>二、ListView初始化过程</h2><p>&nbsp;&nbsp;重点关注ListView初始化过程中onLayout过程，因为与RecycleBin交互主要在这个过程。我们知道，android视图树的根节点是FrameLayout子类，而FrameLayout会让子view执行两次onLayout过程，ListView也不例外，也会有两次onLayout过程。</p>
+<h3 id="1-第一次onLayout"><a href="#1-第一次onLayout" class="headerlink" title="1.第一次onLayout"></a>1.第一次onLayout</h3><p>&nbsp;&nbsp;ListView中没有复写父类AbsListView的onLayout方法，不过在父类onLayout中，做完数据判断后，直接调用了layoutChildren，并且注释有说明，子类不应该复写onLayout方法，而该复写layoutChildren。由于layoutChildren需要针对两次onLayout处理，所以判断和分支流程特别复杂，抽取出第一次调用的流程，大概如下：</p>
+<pre><code> protected void layoutChildren(){
+    int childCount = getChildCount();
+
+    switch(mLayoutMode){
+
+    }
+    boolean dataChanged = mDataChanged;
+    if(dataChanged){
+
+    }else{
+        recycleBin.fillActiveView(childCount,firstPosition);
+    }
+    detachAllViewsFromParent();
+    switch (mLayoutMode){
+        default:
+            if(childCount==0)
+                fillFromTop(childrenTop);
+            else
+                fillSpecific(0,childrenTop)
+
+    }
+
 }
-</code></pre><h3 id="条件语句-LESS中称作引导"><a href="#条件语句-LESS中称作引导" class="headerlink" title="条件语句(LESS中称作引导)"></a>条件语句(LESS中称作引导)</h3><ul>
-<li>Less : 可以通过 when 语句判断条件</li>
-<li>Sass : 通过 @if 和 @else 的方式进行条件判断</li>
-</ul>
-<table><tr><td>Less</td><td>Sass</td></tr><tr><td rowspan="2"><img width="400px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fnty9d44q4j30pi0bcacy.jpg"></td><td><img width="300px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fnty9br31dj30p40iqdjj.jpg"></td></tr></table>
+</code></pre><p>&nbsp;&nbsp;以上是代码结构，省去了很多与分析流程无关的代码，可以看到，由于我们数据源没有变化，dataChanged等于false，进入fillActiveViews，但是此时ListView没有任何子view，childCount为0，这行代码没有任何作用，进入switch语句后，进入default分支，调用fillFromTop。我们进入该函数，发现主要调用了fillDown方法，完整代码如下</p>
+<pre><code>private View fillDown(int pos, int nextTop) {
+    View selectedView = null;
+    int end = (getBottom() - getTop()) - mListPadding.bottom;
+    while (nextTop &lt; end &amp;&amp; pos &lt; mItemCount) {
+        // is this the selected item?  
+        boolean selected = pos == mSelectedPosition;
+        View child = makeAndAddView(pos, nextTop, true, mListPadding.left, selected);
+        nextTop = child.getBottom() + mDividerHeight;
+        if (selected) {
+            selectedView = child;
+        }
+        pos++;
+    }
+    return selectedView;
+}
+</code></pre><p>&nbsp;&nbsp;可以看到，循环调用makeAndAddView（）方法，终止条件是数据项加载完或者最后一个子view的top小于ListView的底部。实现从ListView顶部一直填充到ListView底部，那么makeAndAddView方法肯定是构建view并且填充view到ListView中，下面是相关代码：</p>
+<pre><code> private View makeAndAddView(int position, int y, boolean flow, int childrenLeft,
+                            boolean selected) {
+    View child;
+    if (!mDataChanged) {
+        // Try to use an exsiting view for this position
+        child = mRecycler.getActiveView(position);
+        if (child != null) {
+            // Found it -- we&apos;re using an existing child
+            // This just needs to be positioned
+            setupChild(child, position, y, flow, childrenLeft, selected, true);
+            return child;
+        }
+    }
+    // Make a new view for this position, or convert an unused view if possible
+    child = obtainView(position, mIsScrap);
+    // This needs to be positioned and measured
+    setupChild(child, position, y, flow, childrenLeft, selected, mIsScrap[0]);
+    return child;
+}
+</code></pre><p>&nbsp;&nbsp;首先尝试通过recycler的getActiveView获取view，由于没有缓存过任何view，这里是获取不到的，再使用obtainView获取view。代码如下</p>
+<pre><code>View obtainView(int position, boolean[] isScrap) {
+    isScrap[0] = false;
+    View scrapView;
+    scrapView = mRecycler.getScrapView(position);
+    View child;
+    if (scrapView != null) {
+        child = mAdapter.getView(position, scrapView, this);
+        if (child != scrapView) {
+            mRecycler.addScrapView(scrapView);
+            if (mCacheColorHint != 0) {
+                child.setDrawingCacheBackgroundColor(mCacheColorHint);
+            }
+        } else {
+            isScrap[0] = true;
+            dispatchFinishTemporaryDetach(child);
+        }
+    } else {
+        child = mAdapter.getView(position, null, this);
+        if (mCacheColorHint != 0) {
+            child.setDrawingCacheBackgroundColor(mCacheColorHint);
+        }
+    }
+    return child;
+}
+</code></pre><p>&nbsp;&nbsp;首先尝试从recyclerBin中获取scrapView，获取成功后作为参数传入Adapter.getView方法中，若获取失败，则将null传入Adapter.getView方法中。我们知道，在使用ListView时需要自定义Adapter，会复写getView方法，通常如下：</p>
+<pre><code> public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    Fruit fruit = getItem(position);
+    View view;
+    ViewHolder viewHolder;
+    if (convertView == null) {
+        view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
+        viewHolder = new ViewHolder();
+        viewHolder.fruitImage = view.findViewById(R.id.fruit_image);
+        viewHolder.fruitName = view.findViewById(R.id.fruit_name);
+        view.setTag(viewHolder);
 
-<h3 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h3><ul>
-<li>Less的作用域是按照代码的从上至下的顺序进行的</li>
-<li>Sass的作用域是按照最后一次定义影响全局的</li>
-</ul>
-<table><tr><td>Less</td><td>Sass</td></tr><tr><td><img width="150px" height="300px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwsyxnt0j30fi0qqacf.jpg"></td><td><img width="150px" height="300px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntwsw1rouj30fg0qodi7.jpg"></td></tr></table>
+    } else {
+        view = convertView;
+        viewHolder = (ViewHolder) view.getTag();
+    }
+    viewHolder.fruitImage.setImageResource(fruit.getImageId());
+    viewHolder.fruitName.setText(fruit.getName());
+    if(position==0)
+        view.setBackgroundColor(Color.RED);
 
-<h3 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h3><ul>
-<li>LESS : 并没有输出设置，</li>
-<li>Sass : 提供4中输出选项：nested, compact, compressed 和 expanded。</li>
-</ul>
-<h3 id="Mixins-混合宏"><a href="#Mixins-混合宏" class="headerlink" title="Mixins (混合宏)"></a>Mixins (混合宏)</h3><ul>
-<li>Less : 支持带参数的混合以及有默认参数值的混合</li>
-<li>Sass : 有明确的定义: @Mixin + 宏 调用 : @include + 宏</li>
-</ul>
-<table><tr><td>Less</td><td>Sass</td></tr><tr><td><img width="300px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxaheqwoj30n00kin0g.jpg"></td><td><img width="300px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxak5ku1j30my0ketcd.jpg"></td></tr></table>
+    return view;
 
-<h3 id="Parametric-Mixins-参数混入"><a href="#Parametric-Mixins-参数混入" class="headerlink" title="Parametric-Mixins (参数混入)"></a>Parametric-Mixins (参数混入)</h3><p>混合宏使用中参数使用：</p>
+}
+</code></pre><p>&nbsp;&nbsp;我们可以看到，convertView为空时会使用LayoutInflater加载布局，如果不为空的话，直接复用convertView。到这里obtainView逻辑已经清楚了，回到makeAndAddView中，会将obtainView得到的view传入到setUpChild方法中，然后会调用addViewInLayout将该view添加到ListView中。也就是说第一次onLayout 方法使用Inflater加载了刚好一屏幕数据，其他数据并没有加载。</p>
+<p>###2.第二次onLayout<br>&nbsp;&nbsp;我们依然从layoutChild方法开始，代码结构如下：</p>
+<pre><code>protected void layoutChildren(){
+    int childCount = getChildCount();
+
+    switch(mLayoutMode){
+
+    }
+    boolean dataChanged = mDataChanged;
+    if(dataChanged){
+
+    }else{
+        recycleBin.fillActiveView(childCount,firstPosition);
+    }
+    detachAllViewsFromParent();
+    switch (mLayoutMode){
+        default:
+            if(childCount==0)
+                fillFromTop(childrenTop);
+            else
+                fillSpecific(0,childrenTop)
+
+    }
+
+}
+</code></pre><p>&nbsp;&nbsp;这次我们可以看到由于childCount已经不是0，代码流程如下：</p>
 <ul>
-<li>Less : @</li>
-<li>Sass : $ + @mixin + @include</li>
+<li>recycleBin.fillActiveView():将屏幕中的view缓存到ActiveView[]中</li>
+<li>detachAllViewsFromParent():将第一次onLayout加入到ListView中的所有view从ListView中detach</li>
+<li>fillSpecific（0，childrenTop）将view加载到ListView中</li>
 </ul>
-<table><tr><td>Less</td><td>Sass</td></tr><tr><td><img width="300px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxcz0u3aj30ng0dwq55.jpg"></td><td><img width="300px" height="100px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxcz7mboj30nm0e0wgz.jpg"></td></tr></table>
-
-<h3 id="Placeholder-占位符"><a href="#Placeholder-占位符" class="headerlink" title="Placeholder (占位符)"></a>Placeholder (占位符)</h3><ul>
-<li>Less : Null</li>
-<li>Sass : 可以使用 <strong>%</strong> 作为占位符</li>
-</ul>
-<h3 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h3><p>Sass在数字上比Less更专业。它已经可以换算单位了。Sass可以处理无法识别的度量单位并将其输出。这个特性很明显是一个对未来的尝试——证明W3C作出的一些改变。</p>
+<p>&nbsp;&nbsp;fillSpecific是第一次onLayout过程中没有用到的方法，这个方法逻辑和fillDown很相似，不过是先加载指定位置view再分别加载两边view，由于传入的position是0，效果上基本和fillDown一样。所有我们还是关注makeAndAddView:</p>
+<pre><code> private View makeAndAddView(int position, int y, boolean flow, int childrenLeft,
+                            boolean selected) {
+    View child;
+    if (!mDataChanged) {
+        // Try to use an exsiting view for this position
+        child = mRecycler.getActiveView(position);
+        if (child != null) {
+            // Found it -- we&apos;re using an existing child
+            // This just needs to be positioned
+            setupChild(child, position, y, flow, childrenLeft, selected, true);
+            return child;
+        }
+    }
+    // Make a new view for this position, or convert an unused view if possible
+    child = obtainView(position, mIsScrap);
+    // This needs to be positioned and measured
+    setupChild(child, position, y, flow, childrenLeft, selected, mIsScrap[0]);
+    return child;
+}
+</code></pre><p>&nbsp;&nbsp;这次代码逻辑就很简单了，mRecycler.getActiveView从缓存中获取view后直接将view传入setUpChild中，不过与第一次调用该方法不同的是，最后一个参数传入的是true，标记该view是使用的缓存，根据该标记，setUpChild方法内会走到attachViewToParent,将该view attach到ListView中。两次onLayout总体来说是这样的：</p>
 <ul>
-<li>Sass : 2in + 3cm + 2pc = 3.514in </li>
-<li>Less : 2in + 3cm + 2pc = Error</li>
+<li>使用inflater加载第一屏数据</li>
+<li>将第一屏数据加入到recycleBin的ActiveViews中，并将这些view从ListView中移除</li>
+<li>将ActiveViews中的view取出，重新attach到ListView中</li>
 </ul>
-<h3 id="选择器继承"><a href="#选择器继承" class="headerlink" title="选择器继承"></a>选择器继承</h3><ul>
-<li>Sass定义的选择器可以通过继承的方式使用</li>
-<li>Less没有这个功能</li>
+<p>&nbsp;&nbsp;也就是说，在onLayout阶段，ActiveView主要是缓存第一次加载的数据，以避免因为两次onLayout产生重复数据</p>
+<h2 id="三、屏幕滑动"><a href="#三、屏幕滑动" class="headerlink" title="三、屏幕滑动"></a>三、屏幕滑动</h2><p>&nbsp;&nbsp;屏幕滑动的处理是写在AbsListView中，触摸监听函数是onTouchEvent（），该函数会针对不同类型的触摸事件进行处理，而在屏幕上滑动事件对应的是ACTION_MOVE,而该case又嵌套一个switch分支，针对TOUCH_MODE处理，我们直接看TOUCH_MODE_SRCOLL,对应手指在屏幕上滑动。在该case内，调用了trackMotionScroll方法，也就是说只要手指在屏幕上滑动，trackMotionScroll就会被调用，trackMotion中核心代码如下：</p>
+<pre><code>final boolean down = incrementalDeltaY&lt;0;
+ if(down)
+{
+    final int top = listPadding.top - incrementalDeltaY;
+    for (int i = 0; i &lt; childCount; i++) {
+        final View child = getChildAt(i);
+        if (child.getBottom() &gt;= top) {
+            break;
+        } else {
+            count++;
+            int position = firstPosition + i;
+            if (position &gt;= headerViewsCount &amp;&amp; position &lt; footerViewsStart) {
+                mRecycler.addScrapView(child);
+            }
+        }
+    }
+} else
+{
+    final int bottom = getHeight() - listPadding.bottom - incrementalDeltaY;
+    for (int i = childCount - 1; i &gt;= 0; i--) {
+        final View child = getChildAt(i);
+        if (child.getTop() &lt;= bottom) {
+            break;
+        } else {
+            start = i;
+            count++;
+            int position = firstPosition + i;
+            if (position &gt;= headerViewsCount &amp;&amp; position &lt; footerViewsStart) {
+                mRecycler.addScrapView(child);
+            }
+        }
+    }
+}
+</code></pre><p>&nbsp;&nbsp;incrementalDeltaY是上次触发event事件时手指在y方向的改变量，如果小于0说明在屏幕上下滑，进入down为true流程。从ListView第一个child开始判断，只要该view的bottom小于ListView的top，说明该view已经划出了屏幕，调用mRecycler.addScrapView将该view缓存到scrapViews中,用count记录下缓存的数量。这样滑出屏幕的view已经缓存下来了，继续看接下来代码:</p>
+<pre><code>if (count &gt; 0) {
+    detachViewsFromParent(start, count);
+}
+offsetChildrenTopAndBottom(incrementalDeltaY);  
+if (down) {
+    mFirstPosition += count;
+}
+invalidate();
+final int absIncrementalDeltaY = Math.abs(incrementalDeltaY);  
+if (spaceAbove &lt; absIncrementalDeltaY || spaceBelow &lt; absIncrementalDeltaY) {
+    fillGap(down);
+}
+</code></pre><p>代码流程如下：</p>
+<ul>
+<li>调用detachViewFromParent，将滑出屏幕的view从ListView中detach掉</li>
+<li>调用offsetChildrenTopAndBottom按照便宜量平移剩下的子view，实现滑动效果</li>
+<li>调用fillGap处理将要滑动到屏幕内的view</li>
 </ul>
-<table><tr><td>Less</td><td>Sass</td></tr><tr><td>Null</td><td><img width="300px" height="150px" src="https://ws1.sinaimg.cn/large/0073X7Nbly1fntxsqoiopj30p60kmn0e.jpg"></td></tr></table>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="开发中如何选择使用Less还是Sass"><a href="#开发中如何选择使用Less还是Sass" class="headerlink" title="开发中如何选择使用Less还是Sass?"></a>开发中如何选择使用Less还是Sass?</h3><ul>
-<li><strong>相同点</strong>：两者都是CSS预处理器，都具有相同的功能，可以帮助我们快速编译代码，帮助我们更好的维护我们的样式代码或者说维护项目吧。</li>
-<li><strong>不同点</strong>：Less相对清晰明了,易于上手,对编译环境要求比较宽松。Sass的功能比Less强大,是下一个层次的选择，适合稍微有经验的前端开发者的工具。</li>
-<li>根据业务线需求、组内成员情况，进行约定</li>
-<li>按需使用，随习惯所为！</li>
+<p>那我们看fillGap如何处理将要移入屏幕的子view的：</p>
+<pre><code>void fillGap(boolean down) {
+    final int count = getChildCount();
+    if (down) {
+        final int startOffset = count &gt; 0 ? getChildAt(count - 1).getBottom() + mDividerHeight :
+                getListPaddingTop();
+        fillDown(mFirstPosition + count, startOffset);
+        correctTooHigh(getChildCount());
+    } else {
+        final int startOffset = count &gt; 0 ? getChildAt(0).getTop() - mDividerHeight :
+                getHeight() - getListPaddingBottom();
+        fillUp(mFirstPosition - 1, startOffset);
+        correctTooLow(getChildCount());
+    }
+}
+</code></pre><p>&nbsp;&nbsp;我们可以看到，方法内部主要是调用了fillDown或者fillUp，我们来回顾下fillDown的逻辑</p>
+<ul>
+<li>从activeView中获取缓存的view</li>
+<li>若第一步获取不成功，则调用obtainView获取view</li>
+<li>obtainView会先尝试复用scrapView中的view</li>
+<li>若上一步复用失败，则使用inflater加载布局来生成view</li>
+<li>将得到的view传入setUpChild中以加入ListView中</li>
 </ul>
-<h3 id="相关参考"><a href="#相关参考" class="headerlink" title="相关参考"></a>相关参考</h3><blockquote>
-<p><a href="http://lesscss.cn/" target="_blank" rel="noopener">http://lesscss.cn/</a> </p>
-<p><a href="https://www.sass.hk/" target="_blank" rel="noopener">https://www.sass.hk/</a></p>
-</blockquote>
+<p>&nbsp;&nbsp;也就是说，在滑动屏幕时，每当有view从屏幕中移出，就先缓存到scrapViews中，再从ListView中移除该view，而每当有view要滑入屏幕中时，会从scrapViews中取出缓存的view,将其中的数据更新为相应位置的数据，再加入到ListView中，这样的循环使得ListView无论加载多少数据，都是固定数量的view在循环利用，内存都不会增加。</p>
+<h2 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h2><p>&nbsp;&nbsp;ListView通过activeView解决两次onLayout过程中数据重复问题，通过scrapView解决滑动过程中view复用问题。无论是onLayout过程还是滑动过程，都是采用attach-detach-attach的操作思路，将两个阶段统一为一个抽象操作，以实现代码的复用。</p>
 </span>
       
     </div>
@@ -378,13 +536,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/02/09/caominkang/ListView源码分析/" rel="prev">ListView源码分析</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/22/liuhaifeng/Regular-Expression/" rel="next">正则表达式总结</a>
+              <a href="/2018/01/26/zhoushiqi/Less-VS-Sass/" rel="next">Less Vs Sass</a>
             
           </div>
         </div>
@@ -524,7 +680,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS-预处理器"><span class="nav-number">1.</span> <span class="nav-text">CSS 预处理器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简述-Less-amp-Sass"><span class="nav-number">2.</span> <span class="nav-text">简述 Less &amp; Sass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sass-amp-Less-对比"><span class="nav-number">4.</span> <span class="nav-text">Sass &amp; Less 对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编译环境"><span class="nav-number">4.1.</span> <span class="nav-text">编译环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用-import"><span class="nav-number">4.2.</span> <span class="nav-text">引用 @import</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量"><span class="nav-number">4.3.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#局部变量和全局变量"><span class="nav-number">4.4.</span> <span class="nav-text">局部变量和全局变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工具库"><span class="nav-number">4.5.</span> <span class="nav-text">工具库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#循环"><span class="nav-number">4.6.</span> <span class="nav-text">循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件语句-LESS中称作引导"><span class="nav-number">4.7.</span> <span class="nav-text">条件语句(LESS中称作引导)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#作用域"><span class="nav-number">4.8.</span> <span class="nav-text">作用域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出格式"><span class="nav-number">4.9.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mixins-混合宏"><span class="nav-number">4.10.</span> <span class="nav-text">Mixins (混合宏)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parametric-Mixins-参数混入"><span class="nav-number">4.11.</span> <span class="nav-text">Parametric-Mixins (参数混入)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Placeholder-占位符"><span class="nav-number">4.12.</span> <span class="nav-text">Placeholder (占位符)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运算"><span class="nav-number">4.13.</span> <span class="nav-text">运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择器继承"><span class="nav-number">4.14.</span> <span class="nav-text">选择器继承</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#开发中如何选择使用Less还是Sass"><span class="nav-number">5.1.</span> <span class="nav-text">开发中如何选择使用Less还是Sass?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关参考"><span class="nav-number">5.2.</span> <span class="nav-text">相关参考</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ListView源码解析"><span class="nav-number">1.</span> <span class="nav-text">ListView源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、RecycleBin"><span class="nav-number">1.1.</span> <span class="nav-text">一、RecycleBin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、ListView初始化过程"><span class="nav-number">1.2.</span> <span class="nav-text">二、ListView初始化过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-第一次onLayout"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.第一次onLayout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、屏幕滑动"><span class="nav-number">1.3.</span> <span class="nav-text">三、屏幕滑动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、总结"><span class="nav-number">1.4.</span> <span class="nav-text">四、总结</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
